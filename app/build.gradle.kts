@@ -67,6 +67,10 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("joda-time:joda-time:2.12.5")
+    //coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+
     configurations {
         all {
             exclude(group = "com.intellij", module = "annotations")

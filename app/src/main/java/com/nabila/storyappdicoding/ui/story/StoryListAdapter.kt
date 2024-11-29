@@ -10,6 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nabila.storyappdicoding.data.model.Story
 import com.nabila.storyappdicoding.databinding.ItemStoryBinding
+import kotlinx.datetime.TimeZone
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import kotlin.text.format
 
 class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
@@ -17,10 +24,19 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
         fun bind(story: Story) {
             binding.tvItemName.text = story.name
             binding.tvItemDescription.text = story.description
-            binding.tvItemCreatedAt.text = story.createdAt
+            binding.tvItemCreatedAt.text = formatCreatedAt(story.createdAt)
             Glide.with(itemView.context)
                 .load(story.photoUrl)
                 .into(binding.imgItemPhoto)
+        }
+
+        private fun formatCreatedAt(createdAt: String): String {
+            // Konversi waktu ISO 8601 ke DateTime Joda-Time
+            val dateTime = DateTime.parse(createdAt)
+
+            // Format waktu sesuai kebutuhan
+            val formatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm")
+            return formatter.print(dateTime)
         }
     }
 
