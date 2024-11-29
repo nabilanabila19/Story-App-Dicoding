@@ -8,16 +8,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.nabila.storyappdicoding.MainActivity
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.ViewModelFactory
-import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -34,6 +31,22 @@ class LoginActivity : AppCompatActivity() {
         setupView()
         setupAction()
         playAnimation()
+
+        viewModel.loginResult.observe(this) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    showLoading(true)
+                }
+                is Result.Success -> {
+                    showLoading(false)
+                    // ... (kode AlertDialog yang sama) ...
+                }
+                is Result.Error -> {
+                    showLoading(false)
+                    Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun setupView() {
@@ -52,19 +65,16 @@ class LoginActivity : AppCompatActivity() {
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
             val email = binding.emailEditText.text.toString()
-            viewModel.saveSession(UserModel(email, "sample_token"))
-            AlertDialog.Builder(this).apply {
-                setTitle("Yeah!")
-                setMessage("Anda berhasil login. Sudah tidak sabar untuk berbagi ya?")
-                setPositiveButton("Lanjut") { _, _ ->
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                    finish()
-                }
-                create()
-                show()
+            val password = binding.passwordEditText.text.toString()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Email dan password harus diisi", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            showLoading(true) // Menampilkan loading indicator
+
+            viewModel.login(email, password)
         }
     }
 
@@ -102,4 +112,7 @@ class LoginActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
 }

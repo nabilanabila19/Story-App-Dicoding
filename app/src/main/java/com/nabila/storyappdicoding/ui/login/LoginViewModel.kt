@@ -1,5 +1,7 @@
 package com.nabila.storyappdicoding.ui.login
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nabila.storyappdicoding.data.pref.UserModel
@@ -8,11 +10,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
-    suspend fun login(email: String, password: String) = userRepository.login(email, password)
+    private val _loginResult = MutableLiveData<Result<UserModel>>()
+    val loginResult: LiveData<Result<UserModel>> = _loginResult
 
-    fun saveSession(user: UserModel) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
-            userRepository.saveSession(user)
+            _loginResult.value = Result.Loading
+            try {
+                val response = userRepository.login(email, password)
+                if (!response.error) {
+                    val user = UserModel(
+                        email = email,
+                        token = response.loginResult.token,
+                        isLogin = true
+                    )
+                    userRepository.saveSession(user)
+                    _loginResult.value = Result.Success(user)
+                } else {
+                    _loginResult.value = Result.Error(response.message)
+                }
+            } catch (e: Exception) {
+                _loginResult.value = Result.Error(e.message.toString())
+            }
         }
     }
 }
