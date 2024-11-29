@@ -1,5 +1,7 @@
 package com.nabila.storyappdicoding.data.remote
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -12,8 +14,9 @@ object ApiConfig {
         val authInterceptor = Interceptor { chain ->
             val req = chain.request()
             val requestHeaders = req.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
+                .addHeader("Authorization", "Bearer $token") // Hanya tambahkan header ini
                 .build()
+            Log.d(TAG, "Request Headers: ${requestHeaders.headers}")
             chain.proceed(requestHeaders)
         }
         val client = OkHttpClient.Builder()

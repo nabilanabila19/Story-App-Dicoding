@@ -23,12 +23,13 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
         return userRepository.getSession().asLiveData()
     }
 
-    fun getStories() {
+    fun getStories(token: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val user = userRepository.getSession().first()
-                val response = userRepository.getStories(user.token) // Ambil StoryResponse
+                val response = userRepository.getStories(token) // Ambil StoryResponse
+                Log.d(TAG, "Story Response: $response")
                 val stories = response.listStory?.map { storyItem -> // Ubah ke List<Story>
                     com.nabila.storyappdicoding.data.model.Story(
                         photoUrl = storyItem?.photoUrl ?: "",
@@ -41,6 +42,7 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
                     )
                 } ?: emptyList()
                 _stories.value = Result.Success(stories) // Update _stories dengan Result.Success
+                Log.d(TAG, "Stories: $stories")
             } catch (e: Exception) {
                 _stories.value = Result.Error(e.message.toString())
                 Log.e(TAG, "Error getting stories: ${e.message}")

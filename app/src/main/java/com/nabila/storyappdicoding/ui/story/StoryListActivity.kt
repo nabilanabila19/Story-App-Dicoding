@@ -29,6 +29,7 @@ class StoryListActivity : AppCompatActivity() {
     }
     private val apiService: ApiService by lazy {
         val token = runBlocking { userPreference.getSession().first().token } // Mengambil token dari UserPreference
+        Log.d(TAG, "Token: $token")
         ApiConfig.getApiService(token) // Memberikan token sebagai parameter
     }
     private val userRepository: UserRepository by lazy {
@@ -49,12 +50,17 @@ class StoryListActivity : AppCompatActivity() {
 
         viewModel.getSession().observe(this) { user ->
             if (user.isLogin) {
-                viewModel.getStories()
+                val token = user.token
+                viewModel.getStories(token)
             } else {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             }
         }
+
+        adapter = StoryListAdapter()
+        binding.rvStories.layoutManager = LinearLayoutManager(this)
+        binding.rvStories.adapter = adapter
 
         viewModel.stories.observe(this) { result ->
             when (result) {

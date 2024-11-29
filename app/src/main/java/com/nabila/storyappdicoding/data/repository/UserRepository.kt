@@ -1,5 +1,7 @@
 package com.nabila.storyappdicoding.data.repository
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.data.pref.UserPreference
 import com.nabila.storyappdicoding.data.remote.ApiService
@@ -34,7 +36,8 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun getStories(token: String): StoryResponse {
-        return apiService.getStories(token)
+        Log.d(TAG, "Get stories with token: $token")
+        return apiService.getStories()
     }
 
     companion object {

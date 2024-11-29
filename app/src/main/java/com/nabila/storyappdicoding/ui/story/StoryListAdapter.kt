@@ -1,5 +1,7 @@
 package com.nabila.storyappdicoding.ui.story
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -30,6 +32,7 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
         val story = getItem(position)
         holder.bind(story)
+        Log.d(TAG, "Binding story: $story")
     }
 
     companion object {
