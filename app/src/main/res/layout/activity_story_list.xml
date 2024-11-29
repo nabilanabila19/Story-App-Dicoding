@@ -52,12 +52,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/rounded_button"
             android:padding="16dp"
             android:src="@drawable/baseline_menu_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/black" />
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -66,6 +66,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
+        android:fitsSystemWindows="true"
+        app:menu="@menu/activity_main_drawer"
+        style="@style/NavigationViewStyle" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
