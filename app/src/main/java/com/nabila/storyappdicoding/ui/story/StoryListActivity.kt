@@ -2,26 +2,40 @@ package com.nabila.storyappdicoding.ui.story
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.observe
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.nabila.storyappdicoding.MainActivity
+import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
-import com.nabila.storyappdicoding.ViewModelFactory
-import com.nabila.storyappdicoding.data.pref.UserModel
+import com.nabila.storyappdicoding.data.pref.UserPreference
+import com.nabila.storyappdicoding.data.pref.dataStore
+import com.nabila.storyappdicoding.data.repository.UserRepository
+import com.nabila.storyappdicoding.ui.login.Result
 import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
+import com.nabila.storyappdicoding.data.remote.ApiConfig
+import com.nabila.storyappdicoding.data.remote.ApiService
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class StoryListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoryListBinding
-    private val storyListViewModel by viewModels<StoryListViewModel> {
-        ViewModelFactory.getInstance(this)
+    private val userPreference: UserPreference by lazy {
+        UserPreference.getInstance(dataStore)
+    }
+    private val apiService: ApiService by lazy {
+        val token = runBlocking { userPreference.getSession().first().token } // Mengambil token dari UserPreference
+        ApiConfig.getApiService(token) // Memberikan token sebagai parameter
+    }
+    private val userRepository: UserRepository by lazy {
+        UserRepository.getInstance(apiService, userPreference) // Memberikan apiService dan userPreference sebagai parameter
+    }
+    private val viewModel: StoryListViewModel by viewModels {
+        StoryListViewModelFactory(userRepository)
     }
     private lateinit var adapter: StoryListAdapter
 
@@ -31,54 +45,35 @@ class StoryListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupRecyclerView()
+        setupNavigationDrawer()
 
-        storyListViewModel.story.observe(this) {
-            adapter.submitList(it)
+        viewModel.getSession().observe(this) { user ->
+            if (user.isLogin) {
+                viewModel.getStories()
+            } else {
+                startActivity(Intent(this, WelcomeActivity::class.java))
+                finish()
+            }
         }
 
-        storyListViewModel.isLoading.observe(this) {
-            showLoading(it)
+        viewModel.stories.observe(this) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    showLoading(true)
+                }
+                is Result.Success -> {
+                    showLoading(false)
+                    adapter.submitList(result.data)
+                }
+                is Result.Error -> {
+                    showLoading(false)
+                    Log.e(TAG, "Error getting stories: ${result.error}")
+                }
+            }
         }
 
         binding.fabAdd.setOnClickListener {
-            val intent = Intent(this, AddStoryActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.option_menu, menu)
-
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu1 -> {
-                storyListViewModel.getSession().observe(this) { user ->
-                    if (user.isLogin) {
-                        val intent = Intent(this, MapsStoryActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        startActivity(Intent(this, WelcomeActivity::class.java))
-                        finish()
-                    }
-                }
-                return true
-            }
-            R.id.menu2 -> {
-                startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
-                return true
-            }
-            R.id.menu3 -> {
-                storyListViewModel.logout()
-                val intent = Intent(this, WelcomeActivity::class.java)
-                startActivity(intent)
-                finish()
-                return true
-            }
-            else -> return true
+            // ...
         }
     }
 
@@ -88,7 +83,33 @@ class StoryListActivity : AppCompatActivity() {
         binding.rvStories.adapter = adapter
     }
 
+    private fun setupNavigationDrawer() {
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        binding.menuButton.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_logout -> {
+                    viewModel.logout() // Memanggil logout() dari instance viewModel
+                    val intent = Intent(this, WelcomeActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    companion object {
+        private const val TAG = "StoryListActivity"
     }
 }
