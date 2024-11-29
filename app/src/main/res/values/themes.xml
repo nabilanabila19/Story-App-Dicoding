@@ -3,6 +3,9 @@
     <style name="Base.Theme.StoryAppDicoding" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/baby_blue</item>
+        <item name="colorPrimaryVariant">@color/navy</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="Theme.StoryAppDicoding" parent="Base.Theme.StoryAppDicoding" />
