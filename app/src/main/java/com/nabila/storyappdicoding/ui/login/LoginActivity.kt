@@ -16,6 +16,7 @@ import com.nabila.storyappdicoding.MainActivity
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.ViewModelFactory
 import com.nabila.storyappdicoding.databinding.ActivityLoginBinding
+import com.nabila.storyappdicoding.ui.story.StoryListActivity
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel by viewModels<LoginViewModel> {
@@ -44,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
                         setTitle("Yeah!")
                         setMessage("Anda berhasil login. Sudah tidak sabar untuk berbagi ya?")
                         setPositiveButton("Lanjut") { _, _ ->
-                            val intent = Intent(context, MainActivity::class.java)
+                            val intent = Intent(context, StoryListActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                             startActivity(intent)
                             finish()

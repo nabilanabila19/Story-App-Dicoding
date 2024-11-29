@@ -5,6 +5,7 @@ import com.nabila.storyappdicoding.data.pref.UserPreference
 import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.data.response.LoginResponse
 import com.nabila.storyappdicoding.data.response.RegisterResponse
+import com.nabila.storyappdicoding.data.response.StoryResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -30,5 +31,22 @@ class UserRepository @Inject constructor(
 
     suspend fun logout() {
         userPreference.logout()
+    }
+
+    suspend fun getStories(token: String): StoryResponse {
+        return apiService.getStories(token)
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: UserRepository? = null
+
+        fun getInstance(apiService: ApiService, userPreference: UserPreference): UserRepository {
+            return INSTANCE ?: synchronized(this) {
+                val instance = UserRepository(apiService, userPreference)
+                INSTANCE = instance
+                instance
+            }
+        }
     }
 }
