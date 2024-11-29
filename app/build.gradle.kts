@@ -61,6 +61,8 @@ dependencies {
 
     implementation("javax.inject:javax.inject:1")
 
+    implementation("com.google.code.gson:gson:2.10")
+
     configurations {
         all {
             exclude(group = "com.intellij", module = "annotations")
