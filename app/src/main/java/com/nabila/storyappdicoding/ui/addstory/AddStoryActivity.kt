@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,8 +17,9 @@ import com.nabila.storyappdicoding.utils.getImageUri
 
 class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
+    private val viewModel: AddStoryViewModel by viewModels()
 
-    private var currentImageUri: Uri? = null
+    /*private var currentImageUri: Uri? = null*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +29,8 @@ class AddStoryActivity : AppCompatActivity() {
         binding.galleryButton.setOnClickListener { startGallery() }
         binding.cameraButton.setOnClickListener { startCamera() }
         binding.uploadButton.setOnClickListener { uploadImage() }
+
+        showImage()
     }
 
     private fun startGallery() {
@@ -37,7 +41,7 @@ class AddStoryActivity : AppCompatActivity() {
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
-            currentImageUri = uri
+            viewModel.currentImageUri = uri // Gunakan viewModel.currentImageUri
             showImage()
         } else {
             Log.d("Photo Picker", "No media selected")
@@ -50,19 +54,22 @@ class AddStoryActivity : AppCompatActivity() {
         if (isSuccess) {
             showImage()
         } else {
-            currentImageUri = null
+            viewModel.currentImageUri = null // Gunakan viewModel.currentImageUri
         }
     }
 
     private fun startCamera() {
-        currentImageUri = getImageUri(this)
-        currentImageUri?.let { uri ->
+        /*viewModel.currentImageUri = getImageUri(this)
+        viewModel.currentImageUri?.let { uri ->
             launcherIntentCamera.launch(uri)
-        }
+        }*/
+        val imageUri = getImageUri(this)
+        viewModel.currentImageUri = imageUri
+        launcherIntentCamera.launch(imageUri)
     }
 
     private fun showImage() {
-        currentImageUri?.let {
+        viewModel.currentImageUri?.let {
             Log.d("Image URI", "showImage: $it")
             binding.previewImageView.setImageURI(it)
         }
