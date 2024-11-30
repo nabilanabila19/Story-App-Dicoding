@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.databinding.ActivityAddStoryBinding
+import com.nabila.storyappdicoding.utils.getImageUri
 
 class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
@@ -43,8 +44,21 @@ class AddStoryActivity : AppCompatActivity() {
         }
     }
 
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            showImage()
+        } else {
+            currentImageUri = null
+        }
+    }
+
     private fun startCamera() {
-        Toast.makeText(this, "Fitur ini belum tersedia", Toast.LENGTH_SHORT).show()
+        currentImageUri = getImageUri(this)
+        currentImageUri?.let { uri ->
+            launcherIntentCamera.launch(uri)
+        }
     }
 
     private fun showImage() {
