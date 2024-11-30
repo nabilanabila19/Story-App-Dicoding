@@ -1,10 +1,12 @@
 package com.nabila.storyappdicoding.ui.story
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +17,7 @@ import com.nabila.storyappdicoding.ui.detailstory.StoryDetailActivity
 import kotlinx.datetime.TimeZone
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import androidx.core.util.Pair
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -30,6 +33,10 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
             Glide.with(itemView.context)
                 .load(story.photoUrl)
                 .into(binding.imgItemPhoto)
+        }
+
+        fun getBinding(): ItemStoryBinding {
+            return binding
         }
 
         private fun formatCreatedAt(createdAt: String): String {
@@ -53,9 +60,20 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
         Log.d(TAG, "Binding story: $story")
 
         holder.itemView.setOnClickListener {
+            /*val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
+            intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
+            holder.itemView.context.startActivity(intent)*/
+
             val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
             intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
-            holder.itemView.context.startActivity(intent)
+
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                holder.itemView.context as Activity,
+                Pair.create(holder.getBinding().imgItemPhoto, "image_transition"), // Ganti dengan ID ImageView di item layout
+                // Tambahkan Pair lainnya jika ada shared element lain
+            )
+
+            holder.itemView.context.startActivity(intent, options.toBundle())
         }
     }
 
