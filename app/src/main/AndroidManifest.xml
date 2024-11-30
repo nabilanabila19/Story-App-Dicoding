@@ -15,6 +15,9 @@
         android:theme="@style/Theme.StoryAppDicoding"
         tools:targetApi="31">
         <activity
+            android:name=".ui.addstory.AddStoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.detailstory.StoryDetailActivity"
             android:exported="false">
             <meta-data

@@ -19,6 +19,7 @@ import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
 import com.nabila.storyappdicoding.data.remote.ApiConfig
 import com.nabila.storyappdicoding.data.remote.ApiService
+import com.nabila.storyappdicoding.ui.addstory.AddStoryActivity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -79,7 +80,8 @@ class StoryListActivity : AppCompatActivity() {
         }
 
         binding.fabAdd.setOnClickListener {
-            // ...
+            val intent = Intent(this, AddStoryActivity::class.java)
+            startActivity(intent)
         }
     }
 

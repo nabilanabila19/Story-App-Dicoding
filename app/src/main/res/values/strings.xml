@@ -16,4 +16,8 @@
     <string name="logout">Keluar</string>
     <string name="password_error">Password tidak boleh kurang dari 8 karakter</string>
     <string name="email_error">Alamat Email Tidak Valid</string>
+    <string name="description">Description</string>
+    <string name="upload">Upload</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 </resources>
