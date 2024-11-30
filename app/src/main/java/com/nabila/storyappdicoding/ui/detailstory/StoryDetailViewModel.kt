@@ -1,4 +1,4 @@
-package com.example.speechease.ui.detailstory
+package com.nabila.storyappdicoding.ui.detailstory
 
 import android.content.ContentValues.TAG
 import android.util.Log

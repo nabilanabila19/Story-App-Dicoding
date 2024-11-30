@@ -1,6 +1,7 @@
 package com.nabila.storyappdicoding.ui.story
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nabila.storyappdicoding.data.model.Story
 import com.nabila.storyappdicoding.databinding.ItemStoryBinding
+import com.nabila.storyappdicoding.ui.detailstory.StoryDetailActivity
 import kotlinx.datetime.TimeZone
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -49,6 +51,12 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
         val story = getItem(position)
         holder.bind(story)
         Log.d(TAG, "Binding story: $story")
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
+            intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     companion object {

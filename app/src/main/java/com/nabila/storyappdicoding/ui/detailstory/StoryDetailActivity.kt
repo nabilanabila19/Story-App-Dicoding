@@ -1,4 +1,4 @@
-package com.example.speechease.ui.detailstory
+package com.nabila.storyappdicoding.ui.detailstory
 
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.nabila.storyappdicoding.data.model.Story
 import com.nabila.storyappdicoding.data.response.ListStoryItem
 import com.nabila.storyappdicoding.data.response.StoryResponse
 import com.nabila.storyappdicoding.databinding.ActivityStoryDetailBinding
@@ -43,7 +44,7 @@ class StoryDetailActivity : AppCompatActivity() {
     }
 
     private fun setupData() {
-        val story = intent.getParcelableExtra<ListStoryItem>(EXTRA_STORY)
+        val story = intent.getParcelableExtra<Story>(EXTRA_STORY) // Ubah tipe data menjadi Story
         if (story != null) {
             Glide.with(this)
                 .load(story.photoUrl)

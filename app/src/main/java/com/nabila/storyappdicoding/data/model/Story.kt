@@ -1,5 +1,9 @@
 package com.nabila.storyappdicoding.data.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Story(
     val photoUrl: String,
     val createdAt: String,
@@ -8,4 +12,4 @@ data class Story(
     val lon: Double?,
     val id: String,
     val lat: Double?
-)
+) : Parcelable
