@@ -45,6 +45,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
+            android:gravity="top|start"
             android:layout_height="250dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
