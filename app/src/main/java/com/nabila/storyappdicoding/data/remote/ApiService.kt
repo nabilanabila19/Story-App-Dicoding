@@ -1,13 +1,16 @@
 package com.nabila.storyappdicoding.data.remote
 
+import com.nabila.storyappdicoding.data.response.DetailStoryResponse
 import com.nabila.storyappdicoding.data.response.LoginResponse
 import com.nabila.storyappdicoding.data.response.RegisterResponse
 import com.nabila.storyappdicoding.data.response.StoryResponse
+import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @FormUrlEncoded
@@ -29,4 +32,10 @@ interface ApiService {
     suspend fun getStories(
         //@Header("Authorization") token: String
     ): StoryResponse
+
+    @GET("stories/{id}")
+    fun getDetailStory(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Call<DetailStoryResponse>
 }

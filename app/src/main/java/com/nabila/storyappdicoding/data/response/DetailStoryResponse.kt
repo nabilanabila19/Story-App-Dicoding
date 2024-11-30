@@ -1,23 +1,20 @@
 package com.nabila.storyappdicoding.data.response
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
 
-data class StoryResponse(
-
-	@field:SerializedName("listStory")
-	val listStory: List<ListStoryItem?>? = emptyList(),
+data class DetailStoryResponse(
 
 	@field:SerializedName("error")
 	val error: Boolean? = null,
 
 	@field:SerializedName("message")
-	val message: String? = null
+	val message: String? = null,
+
+	@field:SerializedName("story")
+	val story: Story? = null
 )
 
-@Parcelize
-data class ListStoryItem(
+data class Story(
 
 	@field:SerializedName("photoUrl")
 	val photoUrl: String? = null,
@@ -32,11 +29,11 @@ data class ListStoryItem(
 	val description: String? = null,
 
 	@field:SerializedName("lon")
-	val lon: Double? = null,
+	val lon: Any? = null,
 
 	@field:SerializedName("id")
 	val id: String? = null,
 
 	@field:SerializedName("lat")
-	val lat: Double? = null
-) : Parcelable
+	val lat: Any? = null
+)
