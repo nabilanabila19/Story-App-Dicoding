@@ -59,6 +59,10 @@ class StoryListActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.isLoading.observe(this) { isLoading ->
+            showLoading(isLoading)
+        }
+
         adapter = StoryListAdapter()
         binding.rvStories.layoutManager = LinearLayoutManager(this)
         binding.rvStories.adapter = adapter
