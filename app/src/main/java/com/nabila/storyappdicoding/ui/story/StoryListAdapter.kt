@@ -18,6 +18,7 @@ import kotlinx.datetime.TimeZone
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import androidx.core.util.Pair
+import org.joda.time.DateTimeZone
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -41,7 +42,7 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
 
         private fun formatCreatedAt(createdAt: String): String {
             // Konversi waktu ISO 8601 ke DateTime Joda-Time
-            val dateTime = DateTime.parse(createdAt)
+            val dateTime = DateTime.parse(createdAt).withZone(DateTimeZone.getDefault())
 
             // Format waktu sesuai kebutuhan
             val formatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm")
