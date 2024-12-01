@@ -63,6 +63,8 @@ class SignupActivity : AppCompatActivity() {
             val password = binding.passwordEditText.text.toString()
 
             lifecycleScope.launch {
+                binding.progressBar.visibility = View.VISIBLE
+
                 try {
                     val response = viewModel.register(name, email, password)
                     if (!response.error) {
@@ -94,6 +96,8 @@ class SignupActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     Log.e("SignupActivity", "Error saat register", e)
                     Toast.makeText(this@SignupActivity, "Terjadi error saat register", Toast.LENGTH_SHORT).show()
+                } finally {
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         }
