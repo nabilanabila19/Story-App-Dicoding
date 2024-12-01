@@ -1,5 +1,6 @@
 package com.nabila.storyappdicoding.ui.addstory
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,7 @@ import com.nabila.storyappdicoding.data.pref.dataStore
 import com.nabila.storyappdicoding.data.remote.ApiConfig
 import com.nabila.storyappdicoding.data.response.FileUploadResponse
 import com.nabila.storyappdicoding.databinding.ActivityAddStoryBinding
+import com.nabila.storyappdicoding.ui.story.StoryListActivity
 import com.nabila.storyappdicoding.utils.getImageUri
 import com.nabila.storyappdicoding.utils.reduceFileImage
 import com.nabila.storyappdicoding.utils.uriToFile
@@ -117,6 +119,11 @@ class AddStoryActivity : AppCompatActivity() {
                     val successResponse = apiService.uploadImage(multipartBody, requestBody)
                     showToast(successResponse.message)
                     showLoading(false)
+
+                    val intent = Intent(this@AddStoryActivity, StoryListActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    finish()
                 } catch (e: HttpException) {
                     val errorBody = e.response()?.errorBody()?.string()
                     val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
