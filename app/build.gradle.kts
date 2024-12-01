@@ -73,7 +73,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("joda-time:joda-time:2.12.5")
-    //coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 
     configurations {
         all {
