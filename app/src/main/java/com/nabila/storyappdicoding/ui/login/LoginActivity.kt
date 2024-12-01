@@ -12,8 +12,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.nabila.storyappdicoding.MainActivity
-import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.ViewModelFactory
 import com.nabila.storyappdicoding.databinding.ActivityLoginBinding
 import com.nabila.storyappdicoding.ui.story.StoryListActivity
@@ -40,7 +38,6 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is Result.Success -> {
                     showLoading(false)
-                    // ... (kode AlertDialog yang sama) ...
                     AlertDialog.Builder(this).apply {
                         setTitle("Yeah!")
                         setMessage("Anda berhasil login. Sudah tidak sabar untuk berbagi ya?")
@@ -85,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            showLoading(true) // Menampilkan loading indicator
+            showLoading(true)
 
             viewModel.login(email, password)
         }

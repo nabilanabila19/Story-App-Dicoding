@@ -8,8 +8,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.nabila.storyappdicoding.data.model.Story
-import com.nabila.storyappdicoding.data.response.ListStoryItem
-import com.nabila.storyappdicoding.data.response.StoryResponse
 import com.nabila.storyappdicoding.databinding.ActivityStoryDetailBinding
 
 @Suppress("DEPRECATION")
@@ -44,7 +42,7 @@ class StoryDetailActivity : AppCompatActivity() {
     }
 
     private fun setupData() {
-        val story = intent.getParcelableExtra<Story>(EXTRA_STORY) // Ubah tipe data menjadi Story
+        val story = intent.getParcelableExtra<Story>(EXTRA_STORY)
         if (story != null) {
             Glide.with(this)
                 .load(story.photoUrl)

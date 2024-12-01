@@ -24,7 +24,7 @@ class LoginViewModel @Inject constructor(private val userRepository: UserReposit
                         token = response.loginResult.token,
                         isLogin = true
                     )
-                    userRepository.saveSession(user) // Simpan UserModel ke DataStore
+                    userRepository.saveSession(user)
                     _loginResult.value = Result.Success(user)
                 } else {
                     _loginResult.value = Result.Error(response.message)

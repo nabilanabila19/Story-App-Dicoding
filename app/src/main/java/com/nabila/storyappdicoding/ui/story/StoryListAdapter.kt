@@ -14,15 +14,10 @@ import com.bumptech.glide.Glide
 import com.nabila.storyappdicoding.data.model.Story
 import com.nabila.storyappdicoding.databinding.ItemStoryBinding
 import com.nabila.storyappdicoding.ui.detailstory.StoryDetailActivity
-import kotlinx.datetime.TimeZone
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import androidx.core.util.Pair
 import org.joda.time.DateTimeZone
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import kotlin.text.format
 
 class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
@@ -41,10 +36,8 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
         }
 
         private fun formatCreatedAt(createdAt: String): String {
-            // Konversi waktu ISO 8601 ke DateTime Joda-Time
             val dateTime = DateTime.parse(createdAt).withZone(DateTimeZone.getDefault())
 
-            // Format waktu sesuai kebutuhan
             val formatter = DateTimeFormat.forPattern("dd MMM yyyy HH:mm")
             return formatter.print(dateTime)
         }
@@ -61,17 +54,12 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
         Log.d(TAG, "Binding story: $story")
 
         holder.itemView.setOnClickListener {
-            /*val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
-            intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
-            holder.itemView.context.startActivity(intent)*/
-
             val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
             intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
 
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 holder.itemView.context as Activity,
-                Pair.create(holder.getBinding().imgItemPhoto, "image_transition"), // Ganti dengan ID ImageView di item layout
-                // Tambahkan Pair lainnya jika ada shared element lain
+                Pair.create(holder.getBinding().imgItemPhoto, "image_transition"),
             )
 
             holder.itemView.context.startActivity(intent, options.toBundle())

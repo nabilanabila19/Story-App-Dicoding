@@ -3,7 +3,6 @@ package com.nabila.storyappdicoding.ui.addstory
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.get
 
 class AddStoryViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     var currentImageUri: Uri?

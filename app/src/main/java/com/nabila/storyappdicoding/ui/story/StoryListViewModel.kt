@@ -28,9 +28,9 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
             _isLoading.value = true
             try {
                 val user = userRepository.getSession().first()
-                val response = userRepository.getStories(token) // Ambil StoryResponse
+                val response = userRepository.getStories(token)
                 Log.d(TAG, "Story Response: $response")
-                val stories = response.listStory?.map { storyItem -> // Ubah ke List<Story>
+                val stories = response.listStory?.map { storyItem ->
                     com.nabila.storyappdicoding.data.model.Story(
                         photoUrl = storyItem?.photoUrl ?: "",
                         createdAt = storyItem?.createdAt ?: "",
@@ -41,7 +41,7 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
                         lat = storyItem?.lat
                     )
                 } ?: emptyList()
-                _stories.value = Result.Success(stories) // Update _stories dengan Result.Success
+                _stories.value = Result.Success(stories)
                 Log.d(TAG, "Stories: $stories")
             } catch (e: Exception) {
                 _stories.value = Result.Error(e.message.toString())

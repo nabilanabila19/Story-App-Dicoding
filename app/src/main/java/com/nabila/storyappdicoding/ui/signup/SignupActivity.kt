@@ -10,7 +10,6 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.result.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -67,7 +66,6 @@ class SignupActivity : AppCompatActivity() {
                 try {
                     val response = viewModel.register(name, email, password)
                     if (!response.error) {
-                        // Register berhasil, pindah ke halaman login
                         Toast.makeText(this@SignupActivity, "Register berhasil!", Toast.LENGTH_SHORT).show()
 
                         AlertDialog.Builder(this@SignupActivity).apply {
@@ -86,17 +84,14 @@ class SignupActivity : AppCompatActivity() {
                             show()
                         }
                     } else {
-                        // Register gagal, tampilkan pesan error dari response
                         Toast.makeText(this@SignupActivity, "Register gagal: ${response.message}", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: HttpException) {
-                    // Handle HttpException, parsing error body untuk mendapatkan pesan error
                     val errorBody = e.response()?.errorBody()?.string()
                     val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
                     val errorMessage = errorResponse.message
                     Toast.makeText(this@SignupActivity, "Register gagal: $errorMessage", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    // Handle error lainnya
                     Log.e("SignupActivity", "Error saat register", e)
                     Toast.makeText(this@SignupActivity, "Terjadi error saat register", Toast.LENGTH_SHORT).show()
                 }

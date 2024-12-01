@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-private const val MAXIMAL_SIZE = 1000000 //1 MB
+private const val MAXIMAL_SIZE = 1000000
 
 fun File.reduceFileImage(): File {
     val file = this

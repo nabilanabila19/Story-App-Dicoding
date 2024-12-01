@@ -6,13 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.nabila.storyappdicoding.R
@@ -41,8 +38,6 @@ class AddStoryActivity : AppCompatActivity() {
         UserPreference.getInstance(dataStore)
     }
 
-    /*private var currentImageUri: Uri? = null*/
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
@@ -63,7 +58,7 @@ class AddStoryActivity : AppCompatActivity() {
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
-            viewModel.currentImageUri = uri // Gunakan viewModel.currentImageUri
+            viewModel.currentImageUri = uri
             showImage()
         } else {
             Log.d("Photo Picker", "No media selected")
@@ -76,7 +71,7 @@ class AddStoryActivity : AppCompatActivity() {
         if (isSuccess) {
             showImage()
         } else {
-            viewModel.currentImageUri = null // Gunakan viewModel.currentImageUri
+            viewModel.currentImageUri = null
         }
     }
 
@@ -98,7 +93,6 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadImage() {
-        /*Toast.makeText(this, "Fitur ini belum tersedia", Toast.LENGTH_SHORT).show()*/
         viewModel.currentImageUri?.let { uri ->
             val imageFile = uriToFile(uri, this).reduceFileImage()
             Log.d("Image File", "showImage: ${imageFile.path}")

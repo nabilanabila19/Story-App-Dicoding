@@ -7,13 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nabila.storyappdicoding.data.pref.UserPreference
-import com.nabila.storyappdicoding.data.remote.ApiConfig
 import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.data.response.DetailStoryResponse
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class StoryDetailViewModel(private val pref: UserPreference, private val userRepository: UserRepository) : ViewModel() {
     private val _storyDetail = MutableLiveData<DetailStoryResponse>()
@@ -34,8 +30,8 @@ class StoryDetailViewModel(private val pref: UserPreference, private val userRep
             try {
                 pref.getSession().collect { user ->
                     val token = user.token
-                    val detailStoryResponse = userRepository.getDetailStory("Bearer $token", id) // Ambil DetailStoryResponse
-                    _storyDetail.value = detailStoryResponse // Update _storyDetail dengan DetailStoryResponse
+                    val detailStoryResponse = userRepository.getDetailStory("Bearer $token", id)
+                    _storyDetail.value = detailStoryResponse
                 }
             } catch (e: Exception) {
                 _isError.value = true

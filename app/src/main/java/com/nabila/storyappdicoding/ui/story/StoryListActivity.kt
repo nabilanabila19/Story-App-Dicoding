@@ -29,12 +29,12 @@ class StoryListActivity : AppCompatActivity() {
         UserPreference.getInstance(dataStore)
     }
     private val apiService: ApiService by lazy {
-        val token = runBlocking { userPreference.getSession().first().token } // Mengambil token dari UserPreference
+        val token = runBlocking { userPreference.getSession().first().token }
         Log.d(TAG, "Token: $token")
-        ApiConfig.getApiService(token) // Memberikan token sebagai parameter
+        ApiConfig.getApiService(token)
     }
     private val userRepository: UserRepository by lazy {
-        UserRepository.getInstance(apiService, userPreference) // Memberikan apiService dan userPreference sebagai parameter
+        UserRepository.getInstance(apiService, userPreference)
     }
     private val viewModel: StoryListViewModel by viewModels {
         StoryListViewModelFactory(userRepository)
@@ -106,7 +106,7 @@ class StoryListActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
-                    viewModel.logout() // Memanggil logout() dari instance viewModel
+                    viewModel.logout()
                     val intent = Intent(this, WelcomeActivity::class.java)
                     startActivity(intent)
                     finish()
