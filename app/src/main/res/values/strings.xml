@@ -20,4 +20,5 @@
     <string name="upload">Upload</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
+    <string name="empty_image_warning">Silakan masukkan berkas gambar terlebih dahulu</string>
 </resources>
