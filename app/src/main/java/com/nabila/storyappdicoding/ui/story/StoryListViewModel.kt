@@ -19,15 +19,16 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun getSession(): LiveData<UserModel> {
+    // hapus nanti
+    /*fun getSession(): LiveData<UserModel> {
         return userRepository.getSession().asLiveData()
-    }
+    }*/
 
     fun getStories(token: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val user = userRepository.getSession().first()
+                //val user = userRepository.getSession().first()
                 val response = userRepository.getStories(token)
                 Log.d(TAG, "Story Response: $response")
                 val stories = response.listStory?.map { storyItem ->

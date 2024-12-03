@@ -8,6 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
@@ -19,23 +21,24 @@ import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
 import com.nabila.storyappdicoding.data.remote.ApiConfig
 import com.nabila.storyappdicoding.data.remote.ApiService
+import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.addstory.AddStoryActivity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 class StoryListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoryListBinding
-    private val userPreference: UserPreference by lazy {
+    // hapus nanti
+    /*private val userPreference: UserPreference by lazy {
         UserPreference.getInstance(dataStore)
-    }
-    private val apiService: ApiService by lazy {
-        val token = runBlocking { userPreference.getSession().first().token }
-        Log.d(TAG, "Token: $token")
-        ApiConfig.getApiService(token)
-    }
+    }*/
     private val userRepository: UserRepository by lazy {
-        UserRepository.getInstance(apiService, userPreference)
+        Injection.provideRepository(this)
     }
+    // hapus nanti
+    /*private val apiService: ApiService by lazy {
+        userRepository.apiService
+    }*/
     private val viewModel: StoryListViewModel by viewModels {
         StoryListViewModelFactory(userRepository)
     }
@@ -49,13 +52,26 @@ class StoryListActivity : AppCompatActivity() {
         setupRecyclerView()
         setupNavigationDrawer()
 
-        viewModel.getSession().observe(this) { user ->
+        /*viewModel.getSession().observe(this) { user ->
             if (user.isLogin) {
-                val token = user.token
-                viewModel.getStories(token)
+                viewModel.getStories("Bearer ${user.token}")
             } else {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
+            }
+        }*/
+        userRepository.getSession().asLiveData().observe(this) { user ->
+            if (user.isLogin) {
+                viewModel.getStories("Bearer ${user.token}")
+            } else {
+                startActivity(Intent(this, WelcomeActivity::class.java))
+                finish()
+            }
+        }
+
+        viewModel.stories.observe(this) { result ->
+            if (result is Result.Success) {
+                adapter.submitList(result.data)
             }
         }
 
@@ -63,11 +79,11 @@ class StoryListActivity : AppCompatActivity() {
             showLoading(isLoading)
         }
 
-        adapter = StoryListAdapter()
+        /*adapter = StoryListAdapter()
         binding.rvStories.layoutManager = LinearLayoutManager(this)
-        binding.rvStories.adapter = adapter
+        binding.rvStories.adapter = adapter*/
 
-        viewModel.stories.observe(this) { result ->
+        /*viewModel.stories.observe(this) { result ->
             when (result) {
                 is Result.Loading -> {
                     showLoading(true)
@@ -81,7 +97,7 @@ class StoryListActivity : AppCompatActivity() {
                     Log.e(TAG, "Error getting stories: ${result.error}")
                 }
             }
-        }
+        }*/
 
         binding.fabAdd.setOnClickListener {
             val intent = Intent(this, AddStoryActivity::class.java)
@@ -103,6 +119,7 @@ class StoryListActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+        // cek ini
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {

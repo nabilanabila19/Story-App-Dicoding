@@ -2,6 +2,9 @@ package com.nabila.storyappdicoding.data.remote
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.nabila.storyappdicoding.data.pref.UserPreference
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -9,14 +12,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
-    fun getApiService(token: String): ApiService {
+    fun getApiService(userPreference: UserPreference): ApiService {
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val authInterceptor = Interceptor { chain ->
+            val token = runBlocking { userPreference.getSession().first().token } // Ambil token dari UserPreference
             val req = chain.request()
             val requestHeaders = req.newBuilder()
                 .addHeader("Authorization", "Bearer $token")
                 .build()
-            Log.d(TAG, "Request Headers: ${requestHeaders.headers}")
             chain.proceed(requestHeaders)
         }
         val client = OkHttpClient.Builder()

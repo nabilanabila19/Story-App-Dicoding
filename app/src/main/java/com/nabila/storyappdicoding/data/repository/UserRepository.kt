@@ -14,7 +14,7 @@ import retrofit2.await
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val apiService: ApiService,
+    val apiService: ApiService,
     private val userPreference: UserPreference
 ) {
     suspend fun register(name: String, email: String, password: String): RegisterResponse {

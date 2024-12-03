@@ -16,8 +16,11 @@ import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.pref.UserPreference
 import com.nabila.storyappdicoding.data.pref.dataStore
 import com.nabila.storyappdicoding.data.remote.ApiConfig
+import com.nabila.storyappdicoding.data.remote.ApiService
+import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.data.response.FileUploadResponse
 import com.nabila.storyappdicoding.databinding.ActivityAddStoryBinding
+import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.story.StoryListActivity
 import com.nabila.storyappdicoding.utils.getImageUri
 import com.nabila.storyappdicoding.utils.reduceFileImage
@@ -36,6 +39,12 @@ class AddStoryActivity : AppCompatActivity() {
     private val viewModel: AddStoryViewModel by viewModels()
     private val userPreference: UserPreference by lazy {
         UserPreference.getInstance(dataStore)
+    }
+    private val userRepository: UserRepository by lazy {
+        Injection.provideRepository(this)
+    }
+    private val apiService: ApiService by lazy {
+        userRepository.apiService
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,8 +117,6 @@ class AddStoryActivity : AppCompatActivity() {
             )
             lifecycleScope.launch {
                 try {
-                    val token = runBlocking { userPreference.getSession().first().token } // Dapatkan token
-                    val apiService = ApiConfig.getApiService(token)
                     val successResponse = apiService.uploadImage(multipartBody, requestBody)
                     showToast(successResponse.message)
                     showLoading(false)
