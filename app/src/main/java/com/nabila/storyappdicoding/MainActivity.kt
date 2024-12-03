@@ -10,14 +10,23 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.nabila.storyappdicoding.data.pref.UserModel
+import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.databinding.ActivityMainBinding
+import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var binding: ActivityMainBinding
+    private val userRepository: UserRepository by lazy {
+        Injection.provideRepository(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +43,27 @@ class MainActivity : AppCompatActivity() {
         setupView()
         setupAction()
         playAnimation()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        lifecycleScope.launch {
+            val user = userRepository.getSession().first()
+            outState.putString("email", user.email)
+            outState.putString("token", user.token)
+            outState.putBoolean("isLogin", user.isLogin)
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val email = savedInstanceState.getString("email", "")
+        val token = savedInstanceState.getString("token", "")
+        val isLogin = savedInstanceState.getBoolean("isLogin", false)
+        val user = UserModel(email, token, isLogin)
+        lifecycleScope.launch {
+            userRepository.saveSession(user)
+        }
     }
 
     private fun setupView() {

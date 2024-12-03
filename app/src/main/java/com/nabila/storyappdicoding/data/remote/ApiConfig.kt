@@ -2,6 +2,7 @@ package com.nabila.storyappdicoding.data.remote
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.nabila.storyappdicoding.data.pref.AuthInterceptor
 import com.nabila.storyappdicoding.data.pref.UserPreference
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -13,24 +14,21 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
     fun getApiService(userPreference: UserPreference): ApiService {
-        val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val authInterceptor = Interceptor { chain ->
-            val token = runBlocking { userPreference.getSession().first().token } // Ambil token dari UserPreference
-            val req = chain.request()
-            val requestHeaders = req.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-            chain.proceed(requestHeaders)
-        }
+        val loggingInterceptor =
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val authInterceptor = AuthInterceptor(userPreference) // Buat instance AuthInterceptor
+
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
+            .addInterceptor(authInterceptor) // Tambahkan AuthInterceptor
             .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://story-api.dicoding.dev/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
+
         return retrofit.create(ApiService::class.java)
     }
 }

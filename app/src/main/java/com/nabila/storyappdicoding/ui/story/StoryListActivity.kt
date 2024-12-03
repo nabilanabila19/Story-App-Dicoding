@@ -4,15 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
+import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.data.pref.UserPreference
 import com.nabila.storyappdicoding.data.pref.dataStore
 import com.nabila.storyappdicoding.data.repository.UserRepository
@@ -24,6 +27,7 @@ import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.addstory.AddStoryActivity
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class StoryListActivity : AppCompatActivity() {
@@ -105,6 +109,27 @@ class StoryListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        lifecycleScope.launch {
+            val user = userRepository.getSession().first()
+            outState.putString("email", user.email)
+            outState.putString("token", user.token)
+            outState.putBoolean("isLogin", user.isLogin)
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val email = savedInstanceState.getString("email", "")
+        val token = savedInstanceState.getString("token", "")
+        val isLogin = savedInstanceState.getBoolean("isLogin", false)
+        val user = UserModel(email, token, isLogin)
+        lifecycleScope.launch {
+            userRepository.saveSession(user)
+        }
+    }
+
     private fun setupRecyclerView() {
         binding.rvStories.layoutManager = LinearLayoutManager(this)
         adapter = StoryListAdapter()
@@ -123,13 +148,15 @@ class StoryListActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
-                    viewModel.logout()
-                    val intent = Intent(this, WelcomeActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                    true
+                    lifecycleScope.launch { // Gunakan lifecycleScope.launch
+                        userRepository.logout() // Panggil userRepository.logout() di dalam coroutine
+                        val intent = Intent(this@StoryListActivity, WelcomeActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    true // Menandakan item telah diproses
                 }
-                else -> false
+                else -> false // Menandakan item tidak diproses
             }
         }
     }
