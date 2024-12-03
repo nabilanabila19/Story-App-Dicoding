@@ -81,6 +81,7 @@ dependencies {
     //implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     configurations {
         all {

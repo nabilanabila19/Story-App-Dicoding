@@ -9,10 +9,17 @@ import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.nabila.storyappdicoding.data.pref.UserModel
+import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.databinding.ActivityWelcomeBinding
+import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.login.LoginActivity
 import com.nabila.storyappdicoding.ui.signup.SignupActivity
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class WelcomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWelcomeBinding
@@ -41,22 +48,22 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun setupAction() {
-        Log.d("WelcomeActivity", "Login Button: ${binding.loginButton}")
-        Log.d("WelcomeActivity", "Signup Button: ${binding.signupButton}")
+        /*Log.d("WelcomeActivity", "Login Button: ${binding.loginButton}")
+        Log.d("WelcomeActivity", "Signup Button: ${binding.signupButton}")*/
 
         binding.loginButton.setOnClickListener {
-            Log.d("WelcomeActivity", "Login button clicked")
+            /*Log.d("WelcomeActivity", "Login button clicked")*/
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
         binding.signupButton.setOnClickListener {
-            Log.d("WelcomeActivity", "Signup button clicked")
+            /*Log.d("WelcomeActivity", "Signup button clicked")*/
             startActivity(Intent(this, SignupActivity::class.java))
         }
 
         try {
             binding.loginButton.setOnClickListener {
-                Log.d("WelcomeActivity", "Login button clicked")
+                /*Log.d("WelcomeActivity", "Login button clicked")*/
                 startActivity(Intent(this, LoginActivity::class.java))
             }
         } catch (e: Exception) {

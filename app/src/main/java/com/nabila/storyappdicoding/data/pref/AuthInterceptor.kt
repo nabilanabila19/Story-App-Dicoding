@@ -1,5 +1,6 @@
 package com.nabila.storyappdicoding.data.pref
 
+import android.util.Log
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -12,6 +13,10 @@ class AuthInterceptor(private val userPreference: UserPreference) : Interceptor 
         val requestHeaders = request.newBuilder()
             .addHeader("Authorization", "Bearer $token")
             .build()
+
+        Log.d("AuthInterceptor", "Intercepting request: ${request.url}") // Tambahkan log di sini
+        Log.d("AuthInterceptor", "Adding Authorization header: Bearer $token")
+
         return chain.proceed(requestHeaders)
     }
 }

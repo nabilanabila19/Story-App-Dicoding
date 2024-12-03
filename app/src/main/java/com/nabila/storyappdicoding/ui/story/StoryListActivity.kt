@@ -13,6 +13,10 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.pref.UserModel
@@ -26,9 +30,11 @@ import com.nabila.storyappdicoding.data.remote.ApiConfig
 import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.addstory.AddStoryActivity
+import com.nabila.storyappdicoding.ui.worker.SaveSessionWorker
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 
 class StoryListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoryListBinding
@@ -73,6 +79,31 @@ class StoryListActivity : AppCompatActivity() {
             }
         }
 
+        // Jadwalkan WorkRequest
+        val saveSessionRequest = PeriodicWorkRequestBuilder<SaveSessionWorker>(15, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "saveSession",
+            ExistingPeriodicWorkPolicy.REPLACE, // Gunakan REPLACE
+            saveSessionRequest
+        )
+
+        // Pantau status WorkRequest
+        val workInfoLiveData = WorkManager.getInstance(this).getWorkInfoByIdLiveData(saveSessionRequest.id)
+        workInfoLiveData.observe(this) { workInfo ->
+            if (workInfo != null) {
+                Log.d("StoryListActivity", "WorkInfo state: ${workInfo.state}")
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    Log.d("StoryListActivity", "SaveSessionWorker has successfully saved the session.")
+                } else if (workInfo.state == WorkInfo.State.FAILED) {
+                    Log.e("StoryListActivity", "SaveSessionWorker failed to save the session.")
+                }
+            }
+        }
+
+        //Log.d("StoryListActivity", "WorkRequest 'saveSession' enqueued.")
+
         viewModel.stories.observe(this) { result ->
             if (result is Result.Success) {
                 adapter.submitList(result.data)
@@ -116,6 +147,7 @@ class StoryListActivity : AppCompatActivity() {
             outState.putString("email", user.email)
             outState.putString("token", user.token)
             outState.putBoolean("isLogin", user.isLogin)
+            Log.d("StoryListActivity", "onSaveInstanceState: Saving session: $user")
         }
     }
 
@@ -127,6 +159,7 @@ class StoryListActivity : AppCompatActivity() {
         val user = UserModel(email, token, isLogin)
         lifecycleScope.launch {
             userRepository.saveSession(user)
+            Log.d("StoryListActivity", "onRestoreInstanceState: Restoring session: $user")
         }
     }
 
@@ -149,7 +182,9 @@ class StoryListActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
                     lifecycleScope.launch { // Gunakan lifecycleScope.launch
+                        Log.d("StoryListActivity", "User logging out")
                         userRepository.logout() // Panggil userRepository.logout() di dalam coroutine
+                        Log.d("StoryListActivity", "User logged out")
                         val intent = Intent(this@StoryListActivity, WelcomeActivity::class.java)
                         startActivity(intent)
                         finish()
