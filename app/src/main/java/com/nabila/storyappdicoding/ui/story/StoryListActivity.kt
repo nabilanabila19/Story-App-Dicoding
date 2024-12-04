@@ -97,8 +97,6 @@ class StoryListActivity : AppCompatActivity() {
             }
         }
 
-        //Log.d("StoryListActivity", "WorkRequest 'saveSession' enqueued.")
-
         viewModel.stories.observe(this) { result ->
             if (result is Result.Success) {
                 adapter.submitList(result.data)
