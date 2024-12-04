@@ -14,8 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.pref.UserPreference
-import com.nabila.storyappdicoding.data.pref.dataStore
-import com.nabila.storyappdicoding.data.remote.ApiConfig
 import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.data.response.FileUploadResponse
@@ -25,9 +23,7 @@ import com.nabila.storyappdicoding.ui.story.StoryListActivity
 import com.nabila.storyappdicoding.utils.getImageUri
 import com.nabila.storyappdicoding.utils.reduceFileImage
 import com.nabila.storyappdicoding.utils.uriToFile
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -38,7 +34,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private val viewModel: AddStoryViewModel by viewModels()
     private val userPreference: UserPreference by lazy {
-        UserPreference.getInstance(dataStore)
+        UserPreference.getInstance(this) // Menggunakan 'this' sebagai Context
     }
     private val userRepository: UserRepository by lazy {
         Injection.provideRepository(this)

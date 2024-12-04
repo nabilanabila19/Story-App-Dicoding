@@ -4,14 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -20,20 +18,17 @@ import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.pref.UserModel
-import com.nabila.storyappdicoding.data.pref.UserPreference
-import com.nabila.storyappdicoding.data.pref.dataStore
 import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.ui.login.Result
 import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
-import com.nabila.storyappdicoding.data.remote.ApiConfig
-import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.addstory.AddStoryActivity
 import com.nabila.storyappdicoding.ui.worker.SaveSessionWorker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 class StoryListActivity : AppCompatActivity() {
@@ -114,6 +109,14 @@ class StoryListActivity : AppCompatActivity() {
             showLoading(isLoading)
         }
 
+        lifecycleScope.launch {
+            val user = userRepository.getSession().first()
+            if (!user.isLogin) {
+                startActivity(Intent(this@StoryListActivity, WelcomeActivity::class.java))
+                finish()
+            }
+        }
+
         /*adapter = StoryListAdapter()
         binding.rvStories.layoutManager = LinearLayoutManager(this)
         binding.rvStories.adapter = adapter*/
@@ -181,17 +184,21 @@ class StoryListActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
-                    lifecycleScope.launch { // Gunakan lifecycleScope.launch
+                    lifecycleScope.launch {
                         Log.d("StoryListActivity", "User logging out")
                         userRepository.logout() // Panggil userRepository.logout() di dalam coroutine
                         Log.d("StoryListActivity", "User logged out")
-                        val intent = Intent(this@StoryListActivity, WelcomeActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        // Tunggu coroutine selesai sebelum memulai WelcomeActivity dan memanggil finish()
+                        withContext(Dispatchers.Main) {
+                            val intent = Intent(this@StoryListActivity, WelcomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
                     }
-                    true // Menandakan item telah diproses
+                    true
                 }
-                else -> false // Menandakan item tidak diproses
+
+                else -> false
             }
         }
     }

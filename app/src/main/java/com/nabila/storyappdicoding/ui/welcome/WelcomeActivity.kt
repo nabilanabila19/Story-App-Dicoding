@@ -18,6 +18,7 @@ import com.nabila.storyappdicoding.databinding.ActivityWelcomeBinding
 import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.login.LoginActivity
 import com.nabila.storyappdicoding.ui.signup.SignupActivity
+import com.nabila.storyappdicoding.ui.story.StoryListActivity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -33,6 +34,24 @@ class WelcomeActivity : AppCompatActivity() {
         setupAction()
         playAnimation()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Pengecekan sesi login
+        lifecycleScope.launch {
+            val userRepository = Injection.provideRepository(this@WelcomeActivity) // Perbaikan di sini
+            val user: UserModel? = userRepository.getUser().first()
+
+            if (user?.isLogin == true && user.token.isNotEmpty()) {
+                startActivity(Intent(this@WelcomeActivity, StoryListActivity::class.java))
+                finish()
+            } else {
+                Log.d("WelcomeActivity", "Pengguna belum login atau token kosong.")
+            }
+        }
+    }
+
 
     private fun setupView() {
         @Suppress("DEPRECATION")

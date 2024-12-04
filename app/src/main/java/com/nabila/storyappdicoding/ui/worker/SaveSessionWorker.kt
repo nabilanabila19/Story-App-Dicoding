@@ -1,12 +1,9 @@
 package com.nabila.storyappdicoding.ui.worker
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.nabila.storyappdicoding.data.pref.UserModel
-import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.di.Injection
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

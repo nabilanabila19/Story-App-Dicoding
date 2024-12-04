@@ -2,6 +2,7 @@ package com.nabila.storyappdicoding.data.repository
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import android.content.Context
 import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.data.pref.UserPreference
 import com.nabila.storyappdicoding.data.remote.ApiService
@@ -14,9 +15,13 @@ import retrofit2.await
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    val apiService: ApiService,
-    private val userPreference: UserPreference
+    private val context: Context, // Tambahkan context
+    val apiService: ApiService
 ) {
+    private val userPreference: UserPreference by lazy {
+        UserPreference.getInstance(context) // Inisialisasi di sini
+    }
+
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
     }
@@ -30,6 +35,10 @@ class UserRepository @Inject constructor(
     }
 
     fun getSession(): Flow<UserModel> {
+        return userPreference.getSession()
+    }
+
+    fun getUser(): Flow<UserModel> {
         return userPreference.getSession()
     }
 
@@ -50,9 +59,9 @@ class UserRepository @Inject constructor(
         @Volatile
         private var INSTANCE: UserRepository? = null
 
-        fun getInstance(apiService: ApiService, userPreference: UserPreference): UserRepository {
+        fun getInstance(context: Context, apiService: ApiService): UserRepository { // Ubah ini
             return INSTANCE ?: synchronized(this) {
-                val instance = UserRepository(apiService, userPreference)
+                val instance = UserRepository(context, apiService) // Ubah ini
                 INSTANCE = instance
                 instance
             }

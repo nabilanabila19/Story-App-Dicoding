@@ -1,26 +1,23 @@
 package com.nabila.storyappdicoding.data.remote
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import com.nabila.storyappdicoding.data.pref.AuthInterceptor
 import com.nabila.storyappdicoding.data.pref.UserPreference
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import android.content.Context
 
 object ApiConfig {
-    fun getApiService(userPreference: UserPreference): ApiService {
+    fun getApiService(context: Context): ApiService {
+        val userPreference = UserPreference.getInstance(context) // Ubah ini
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val authInterceptor = AuthInterceptor(userPreference) // Buat instance AuthInterceptor
+        val authInterceptor = AuthInterceptor(userPreference)
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor) // Tambahkan AuthInterceptor
+            .addInterceptor(authInterceptor)
             .build()
 
         val retrofit = Retrofit.Builder()

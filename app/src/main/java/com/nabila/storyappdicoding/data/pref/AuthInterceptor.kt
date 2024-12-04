@@ -14,7 +14,7 @@ class AuthInterceptor(private val userPreference: UserPreference) : Interceptor 
             .addHeader("Authorization", "Bearer $token")
             .build()
 
-        Log.d("AuthInterceptor", "Intercepting request: ${request.url}") // Tambahkan log di sini
+        Log.d("AuthInterceptor", "Intercepting request: ${request.url}")
         Log.d("AuthInterceptor", "Adding Authorization header: Bearer $token")
 
         return chain.proceed(requestHeaders)
