@@ -12,13 +12,11 @@ class SaveSessionWorker(appContext: Context, workerParams: WorkerParameters) : W
     override fun doWork(): Result {
         Log.d("SaveSessionWorker", "doWork() started")
         val userRepository = Injection.provideRepository(applicationContext)
-        // Ambil data sesi dari UserPreference
         val session = runBlocking { userRepository.getSession().first() }
-        // Simpan data sesi ke DataStore
         runBlocking {
             userRepository.saveSession(session)
         }
-        Log.d("SaveSessionWorker", "Session data saved to DataStore: $session") // Log data sesi
+        Log.d("SaveSessionWorker", "Session data saved to DataStore: $session")
         Log.d("SaveSessionWorker", "doWork() finished")
 
         return Result.success()

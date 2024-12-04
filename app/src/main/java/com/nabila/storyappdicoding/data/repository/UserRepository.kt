@@ -15,11 +15,11 @@ import retrofit2.await
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val context: Context, // Tambahkan context
+    private val context: Context,
     val apiService: ApiService
 ) {
     private val userPreference: UserPreference by lazy {
-        UserPreference.getInstance(context) // Inisialisasi di sini
+        UserPreference.getInstance(context)
     }
 
     suspend fun register(name: String, email: String, password: String): RegisterResponse {

@@ -34,7 +34,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private val viewModel: AddStoryViewModel by viewModels()
     private val userPreference: UserPreference by lazy {
-        UserPreference.getInstance(this) // Menggunakan 'this' sebagai Context
+        UserPreference.getInstance(this)
     }
     private val userRepository: UserRepository by lazy {
         Injection.provideRepository(this)
@@ -81,10 +81,6 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
-        /*viewModel.currentImageUri = getImageUri(this)
-        viewModel.currentImageUri?.let { uri ->
-            launcherIntentCamera.launch(uri)
-        }*/
         val imageUri = getImageUri(this)
         viewModel.currentImageUri = imageUri
         launcherIntentCamera.launch(imageUri)

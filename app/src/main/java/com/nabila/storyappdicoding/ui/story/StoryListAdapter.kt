@@ -26,11 +26,8 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
             binding.tvItemName.text = story.name
             binding.tvItemDescription.text = story.description
             binding.tvItemCreatedAt.text = formatCreatedAt(story.createdAt)
-            /*Glide.with(itemView.context)
-                .load(story.photoUrl)
-                .into(binding.imgItemPhoto)*/
             Glide.with(itemView.context)
-                .asBitmap() // Tambahkan ini
+                .asBitmap()
                 .load(story.photoUrl)
                 .into(binding.imgItemPhoto)
         }

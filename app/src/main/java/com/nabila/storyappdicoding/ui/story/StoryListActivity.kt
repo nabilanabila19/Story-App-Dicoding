@@ -33,17 +33,9 @@ import java.util.concurrent.TimeUnit
 
 class StoryListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoryListBinding
-    // hapus nanti
-    /*private val userPreference: UserPreference by lazy {
-        UserPreference.getInstance(dataStore)
-    }*/
     private val userRepository: UserRepository by lazy {
         Injection.provideRepository(this)
     }
-    // hapus nanti
-    /*private val apiService: ApiService by lazy {
-        userRepository.apiService
-    }*/
     private val viewModel: StoryListViewModel by viewModels {
         StoryListViewModelFactory(userRepository)
     }
@@ -57,14 +49,6 @@ class StoryListActivity : AppCompatActivity() {
         setupRecyclerView()
         setupNavigationDrawer()
 
-        /*viewModel.getSession().observe(this) { user ->
-            if (user.isLogin) {
-                viewModel.getStories("Bearer ${user.token}")
-            } else {
-                startActivity(Intent(this, WelcomeActivity::class.java))
-                finish()
-            }
-        }*/
         userRepository.getSession().asLiveData().observe(this) { user ->
             if (user.isLogin) {
                 viewModel.getStories("Bearer ${user.token}")
@@ -74,17 +58,15 @@ class StoryListActivity : AppCompatActivity() {
             }
         }
 
-        // Jadwalkan WorkRequest
         val saveSessionRequest = PeriodicWorkRequestBuilder<SaveSessionWorker>(15, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "saveSession",
-            ExistingPeriodicWorkPolicy.REPLACE, // Gunakan REPLACE
+            ExistingPeriodicWorkPolicy.REPLACE,
             saveSessionRequest
         )
 
-        // Pantau status WorkRequest
         val workInfoLiveData = WorkManager.getInstance(this).getWorkInfoByIdLiveData(saveSessionRequest.id)
         workInfoLiveData.observe(this) { workInfo ->
             if (workInfo != null) {
@@ -114,26 +96,6 @@ class StoryListActivity : AppCompatActivity() {
                 finish()
             }
         }
-
-        /*adapter = StoryListAdapter()
-        binding.rvStories.layoutManager = LinearLayoutManager(this)
-        binding.rvStories.adapter = adapter*/
-
-        /*viewModel.stories.observe(this) { result ->
-            when (result) {
-                is Result.Loading -> {
-                    showLoading(true)
-                }
-                is Result.Success -> {
-                    showLoading(false)
-                    adapter.submitList(result.data)
-                }
-                is Result.Error -> {
-                    showLoading(false)
-                    Log.e(TAG, "Error getting stories: ${result.error}")
-                }
-            }
-        }*/
 
         binding.fabAdd.setOnClickListener {
             val intent = Intent(this, AddStoryActivity::class.java)
@@ -178,15 +140,13 @@ class StoryListActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
-        // cek ini
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
                     lifecycleScope.launch {
                         Log.d("StoryListActivity", "User logging out")
-                        userRepository.logout() // Panggil userRepository.logout() di dalam coroutine
+                        userRepository.logout()
                         Log.d("StoryListActivity", "User logged out")
-                        // Tunggu coroutine selesai sebelum memulai WelcomeActivity dan memanggil finish()
                         withContext(Dispatchers.Main) {
                             val intent = Intent(this@StoryListActivity, WelcomeActivity::class.java)
                             startActivity(intent)
