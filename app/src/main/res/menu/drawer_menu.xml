@@ -5,4 +5,8 @@
         android:id="@+id/nav_logout"
         android:title="@string/logout" />
 
+    <item
+        android:id="@+id/nav_map"
+        android:title="@string/maps" />
+
 </menu>

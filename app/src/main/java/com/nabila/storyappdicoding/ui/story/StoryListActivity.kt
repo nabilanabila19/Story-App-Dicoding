@@ -24,6 +24,7 @@ import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
 import com.nabila.storyappdicoding.di.Injection
 import com.nabila.storyappdicoding.ui.addstory.AddStoryActivity
+import com.nabila.storyappdicoding.ui.maps.MapsActivity
 import com.nabila.storyappdicoding.ui.worker.SaveSessionWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -155,7 +156,10 @@ class StoryListActivity : AppCompatActivity() {
                     }
                     true
                 }
-
+                R.id.nav_map -> {
+                    startActivity(Intent(this, MapsActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }
