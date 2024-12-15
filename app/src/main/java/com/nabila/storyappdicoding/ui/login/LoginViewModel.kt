@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.data.repository.UserRepository
+import com.nabila.storyappdicoding.utils.Result
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

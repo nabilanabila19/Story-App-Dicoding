@@ -19,7 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.data.repository.UserRepository
-import com.nabila.storyappdicoding.ui.login.Result
+import com.nabila.storyappdicoding.utils.Result
 import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
 import com.nabila.storyappdicoding.di.Injection

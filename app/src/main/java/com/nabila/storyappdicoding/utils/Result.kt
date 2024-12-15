@@ -1,4 +1,4 @@
-package com.nabila.storyappdicoding.ui.login
+package com.nabila.storyappdicoding.utils
 
 sealed class Result<out R> {
     object Loading : Result<Nothing>()

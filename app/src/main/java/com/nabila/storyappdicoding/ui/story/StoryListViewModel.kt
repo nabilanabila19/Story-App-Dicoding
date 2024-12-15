@@ -5,13 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nabila.storyappdicoding.ui.login.Result
+import com.nabila.storyappdicoding.data.model.Story
+import com.nabila.storyappdicoding.utils.Result
 import com.nabila.storyappdicoding.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class StoryListViewModel(private val userRepository: UserRepository) : ViewModel() {
-    private val _stories = MutableLiveData<Result<List<com.nabila.storyappdicoding.data.model.Story>>>()
-    val stories: LiveData<Result<List<com.nabila.storyappdicoding.data.model.Story>>> = _stories
+    private val _stories = MutableLiveData<Result<List<Story>>>()
+    val stories: LiveData<Result<List<Story>>> = _stories
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading

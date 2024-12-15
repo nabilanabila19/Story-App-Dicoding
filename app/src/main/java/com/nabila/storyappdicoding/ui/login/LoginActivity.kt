@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.nabila.storyappdicoding.ViewModelFactory
 import com.nabila.storyappdicoding.databinding.ActivityLoginBinding
 import com.nabila.storyappdicoding.ui.story.StoryListActivity
+import com.nabila.storyappdicoding.utils.Result
 
 class LoginActivity : AppCompatActivity() {
     private val viewModel by viewModels<LoginViewModel> {

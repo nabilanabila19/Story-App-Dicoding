@@ -55,6 +55,11 @@ class UserRepository @Inject constructor(
         return apiService.getDetailStory(token, id).await()
     }
 
+    suspend fun getStoriesWithLocation(token: String): StoryResponse {
+        Log.d(TAG, "Get stories with location token: $token")
+        return apiService.getStoriesWithLocation()
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: UserRepository? = null

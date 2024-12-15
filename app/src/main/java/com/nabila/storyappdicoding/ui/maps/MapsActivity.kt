@@ -2,20 +2,27 @@ package com.nabila.storyappdicoding.ui.maps
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
+import androidx.activity.viewModels
+import androidx.lifecycle.asLiveData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.databinding.ActivityMapsBinding
+import com.nabila.storyappdicoding.di.Injection
+import com.nabila.storyappdicoding.utils.Result.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    private val viewModel: MapsViewModel by viewModels {
+        MapsViewModelFactory(Injection.provideRepository(this))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +48,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        viewModel.storiesWithLocation.observe(this) { result ->
+            if (result is Success) {
+                val latLngBoundsBuilder = LatLngBounds.Builder()
+                result.data.forEach { story ->
+                    val lat = story.lat ?: 0.0
+                    val lon = story.lon ?: 0.0
+                    val latLng = LatLng(lat, lon)
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(latLng)
+                            .title(story.name)
+                            .snippet(story.description)
+                    )
+                    latLngBoundsBuilder.include(latLng)
+                }
+                val latLngBounds = latLngBoundsBuilder.build()
+                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, 100) // padding 100px
+                mMap.animateCamera(cameraUpdate) // Animasikan pergerakan kamera
+            }
+        }
+
+        val userRepository = Injection.provideRepository(this)
+        userRepository.getSession().asLiveData().observe(this) { user ->
+            if (user.isLogin) {
+                viewModel.getStoriesWithLocation("Bearer ${user.token}")
+            }
+        }
     }
 }
