@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -19,7 +21,6 @@ import com.google.android.material.navigation.NavigationView
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.pref.UserModel
 import com.nabila.storyappdicoding.data.repository.UserRepository
-import com.nabila.storyappdicoding.utils.Result
 import com.nabila.storyappdicoding.databinding.ActivityStoryListBinding
 import com.nabila.storyappdicoding.ui.welcome.WelcomeActivity
 import com.nabila.storyappdicoding.di.Injection
@@ -49,6 +50,8 @@ class StoryListActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupNavigationDrawer()
+        adapter = StoryListAdapter()
+        binding.rvStories.adapter = adapter
 
         userRepository.getSession().asLiveData().observe(this) { user ->
             if (user.isLogin) {
@@ -64,7 +67,7 @@ class StoryListActivity : AppCompatActivity() {
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "saveSession",
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.UPDATE,
             saveSessionRequest
         )
 
@@ -80,14 +83,25 @@ class StoryListActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.stories.observe(this) { result ->
-            if (result is Result.Success) {
-                adapter.submitList(result.data)
+        viewModel.storyPagingData.observe(this) { pagingData ->
+            lifecycleScope.launch {
+                adapter.submitData(pagingData)
             }
         }
 
-        viewModel.isLoading.observe(this) { isLoading ->
-            showLoading(isLoading)
+        adapter.addLoadStateListener { loadState ->
+            binding.progressBar.visibility = if (loadState.refresh is LoadState.Loading) View.VISIBLE else View.GONE
+
+            val errorState = loadState.source.append as? LoadState.Error
+                ?: loadState.source.prepend as? LoadState.Error
+                ?: loadState.append as? LoadState.Error
+                ?: loadState.prepend as? LoadState.Error
+            errorState?.let {
+                Toast.makeText(
+                    this@StoryListActivity, "Error: ${it.error.message}", Toast.LENGTH_LONG // Durasi Toast
+                ).show()
+            }
+            Log.d("StoryListActivity", "LoadState: $loadState")
         }
 
         lifecycleScope.launch {
@@ -129,8 +143,6 @@ class StoryListActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         binding.rvStories.layoutManager = LinearLayoutManager(this)
-        adapter = StoryListAdapter()
-        binding.rvStories.adapter = adapter
     }
 
     private fun setupNavigationDrawer() {
@@ -163,10 +175,6 @@ class StoryListActivity : AppCompatActivity() {
                 else -> false
             }
         }
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     companion object {

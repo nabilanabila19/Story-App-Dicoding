@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nabila.storyappdicoding.data.model.Story
@@ -17,9 +16,10 @@ import com.nabila.storyappdicoding.ui.detailstory.StoryDetailActivity
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
 import org.joda.time.DateTimeZone
 
-class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DIFF_CALLBACK) {
+class StoryListAdapter : PagingDataAdapter<Story, StoryListAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
     class StoryViewHolder(private val binding: ItemStoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(story: Story) {
@@ -51,19 +51,21 @@ class StoryListAdapter : ListAdapter<Story, StoryListAdapter.StoryViewHolder>(DI
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story)
-        Log.d(TAG, "Binding story: $story")
+        story?.let {
+            holder.bind(it)
+            Log.d(TAG, "Binding story: $it")
 
-        holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
-            intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
+            holder.itemView.setOnClickListener {
+                val intent = Intent(holder.itemView.context, StoryDetailActivity::class.java)
+                intent.putExtra(StoryDetailActivity.EXTRA_STORY, story)
 
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                holder.itemView.context as Activity,
-                Pair.create(holder.getBinding().imgItemPhoto, "image_transition"),
-            )
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    holder.itemView.context as Activity,
+                    Pair.create(holder.getBinding().imgItemPhoto, "image_transition"),
+                )
 
-            holder.itemView.context.startActivity(intent, options.toBundle())
+                holder.itemView.context.startActivity(intent, options.toBundle())
+            }
         }
     }
 

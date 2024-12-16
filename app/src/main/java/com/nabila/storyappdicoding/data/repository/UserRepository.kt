@@ -46,9 +46,9 @@ class UserRepository @Inject constructor(
         userPreference.logout()
     }
 
-    suspend fun getStories(token: String): StoryResponse {
-        Log.d(TAG, "Get stories with token: $token")
-        return apiService.getStories()
+    suspend fun getStories(token: String, page: Int, size: Int): StoryResponse {
+        Log.d(TAG, "Get stories with token: $token, page: $page, size: $size")
+        return apiService.getStories(page, size)
     }
 
     suspend fun getDetailStory(token: String, id: String): DetailStoryResponse {
@@ -64,9 +64,9 @@ class UserRepository @Inject constructor(
         @Volatile
         private var INSTANCE: UserRepository? = null
 
-        fun getInstance(context: Context, apiService: ApiService): UserRepository { // Ubah ini
+        fun getInstance(context: Context, apiService: ApiService): UserRepository {
             return INSTANCE ?: synchronized(this) {
-                val instance = UserRepository(context, apiService) // Ubah ini
+                val instance = UserRepository(context, apiService)
                 INSTANCE = instance
                 instance
             }

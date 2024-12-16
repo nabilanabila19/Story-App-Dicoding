@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.nabila.storyappdicoding.R
-import com.nabila.storyappdicoding.data.pref.UserPreference
 import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.data.repository.UserRepository
 import com.nabila.storyappdicoding.data.response.FileUploadResponse
@@ -33,9 +32,6 @@ import retrofit2.HttpException
 class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private val viewModel: AddStoryViewModel by viewModels()
-    private val userPreference: UserPreference by lazy {
-        UserPreference.getInstance(this)
-    }
     private val userRepository: UserRepository by lazy {
         Injection.provideRepository(this)
     }

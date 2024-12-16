@@ -10,7 +10,7 @@ import android.content.Context
 
 object ApiConfig {
     fun getApiService(context: Context): ApiService {
-        val userPreference = UserPreference.getInstance(context) // Ubah ini
+        val userPreference = UserPreference.getInstance(context)
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val authInterceptor = AuthInterceptor(userPreference)

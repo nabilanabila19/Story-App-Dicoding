@@ -55,36 +55,28 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.androidx.activity.ktx)
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
-
-    implementation("javax.inject:javax.inject:1")
-
-    implementation("com.google.code.gson:gson:2.10")
-
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-    implementation("joda-time:joda-time:2.12.5")
-
-    implementation("androidx.exifinterface:exifinterface:1.3.7")
-
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    //implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation(libs.javax.inject)
+    implementation(libs.gson)
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.joda.time)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.datastore.preferences.v100)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v261)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.paging.runtime.ktx)
 
     configurations {
         all {
