@@ -52,6 +52,8 @@ interface ApiService {
     suspend fun uploadImage(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
+        @Part("lat") lat: Double?,
+        @Part("lon") lon: Double?
     ): FileUploadResponse
 
     @GET("stories")
