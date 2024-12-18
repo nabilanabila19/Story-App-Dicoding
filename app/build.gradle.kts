@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.runner)
     implementation(libs.androidx.ui.text.android)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +78,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.play.services.location.v2101)
 
     configurations {
         all {

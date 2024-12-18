@@ -1,6 +1,9 @@
 package com.nabila.storyappdicoding.ui.addstory
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +11,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.nabila.storyappdicoding.R
 import com.nabila.storyappdicoding.data.remote.ApiService
@@ -38,6 +45,9 @@ class AddStoryActivity : AppCompatActivity() {
     private val apiService: ApiService by lazy {
         userRepository.apiService
     }
+    private var latitude: Double? = null
+    private var longitude: Double? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +59,19 @@ class AddStoryActivity : AppCompatActivity() {
         binding.uploadButton.setOnClickListener { uploadImage() }
 
         showImage()
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        binding.locationCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                getMyLastLocation()
+                binding.locationTextView.visibility = View.VISIBLE
+            } else {
+                latitude = null
+                longitude = null
+                binding.locationTextView.visibility = View.GONE
+            }
+        }
     }
 
     private fun startGallery() {
@@ -105,7 +128,8 @@ class AddStoryActivity : AppCompatActivity() {
             )
             lifecycleScope.launch {
                 try {
-                    val successResponse = apiService.uploadImage(multipartBody, requestBody)
+                    val successResponse =
+                        apiService.uploadImage(multipartBody, requestBody, latitude, longitude)
                     showToast(successResponse.message)
                     showLoading(false)
 
@@ -123,6 +147,65 @@ class AddStoryActivity : AppCompatActivity() {
 
         } ?: showToast(getString(R.string.empty_image_warning))
     }
+
+    private fun getMyLastLocation() {
+        // Pastikan Anda memiliki izin lokasi
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    latitude = location.latitude
+                    longitude = location.longitude
+                    binding.locationTextView.text = "Lokasi: $latitude, $longitude"
+                } else {
+                    Toast.makeText(
+                        this@AddStoryActivity,
+                        "Lokasi tidak ditemukan. Pastikan GPS aktif.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            // Minta izin lokasi jika belum diberikan
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Izin lokasi diberikan, dapatkan lokasi
+                    getMyLastLocation()
+                }
+
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Izin lokasi diberikan, dapatkan lokasi
+                    getMyLastLocation()
+                }
+
+                else -> {
+                    // Izin lokasi ditolak
+                    // Anda dapat menampilkan pesan atau menonaktifkan _checkbox_ lokasi
+                    binding.locationCheckBox.isChecked = false
+                }
+            }
+        }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
