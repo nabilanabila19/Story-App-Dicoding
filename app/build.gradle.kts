@@ -80,6 +80,13 @@ dependencies {
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.play.services.location.v2101)
 
+    // testing
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.androidx.paging.common)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     configurations {
         all {
             exclude(group = "com.intellij", module = "annotations")

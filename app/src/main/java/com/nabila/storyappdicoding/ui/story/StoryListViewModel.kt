@@ -18,7 +18,7 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
     val storyPagingData: LiveData<PagingData<Story>> = _storyPagingData
 
     fun getStories(token: String) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             val pager = Pager(
                 config = PagingConfig(
                     pageSize = 20,
@@ -29,6 +29,11 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
             ).flow.cachedIn(viewModelScope)
 
             pager.collectLatest { pagingData ->
+                _storyPagingData.value = pagingData
+            }
+        }*/
+        viewModelScope.launch {
+            userRepository.getStories(token).collectLatest { pagingData ->
                 _storyPagingData.value = pagingData
             }
         }

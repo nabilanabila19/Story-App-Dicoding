@@ -3,6 +3,7 @@ package com.nabila.storyappdicoding.ui.story
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.nabila.storyappdicoding.data.model.Story
+import com.nabila.storyappdicoding.data.remote.ApiService
 import com.nabila.storyappdicoding.data.repository.UserRepository
 
 class StoryPagingSource(private val userRepository: UserRepository, private val token: String) :
@@ -11,7 +12,7 @@ class StoryPagingSource(private val userRepository: UserRepository, private val 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Story> {
         return try {
             val position = params.key ?: INITIAL_PAGE_INDEX
-            val responseData = userRepository.getStories(token, position, params.loadSize)
+            val responseData = userRepository.apiService.getStories(position, params.loadSize) // Akses apiService melalui userRepository
 
             LoadResult.Page(
                 data = responseData.listStory?.map { storyItem ->
