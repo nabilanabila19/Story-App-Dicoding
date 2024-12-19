@@ -33,8 +33,12 @@ class StoryListViewModel(private val userRepository: UserRepository) : ViewModel
             }
         }*/
         viewModelScope.launch {
-            userRepository.getStories(token).collectLatest { pagingData ->
-                _storyPagingData.value = pagingData
+            viewModelScope.launch {
+                userRepository.getStories(token)
+                    .cachedIn(viewModelScope) // Pindahkan cachedIn() ke sini
+                    .collectLatest { pagingData ->
+                        _storyPagingData.value = pagingData
+                    }
             }
         }
     }

@@ -28,6 +28,10 @@ android {
             )
         }
     }
+    tasks.withType<Test> {
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
+        jvmArgs("-Dnet.bytebuddy.experimental=true")
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
