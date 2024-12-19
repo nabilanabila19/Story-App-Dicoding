@@ -62,7 +62,7 @@ class UserRepository @Inject constructor(
                 initialLoadSize = 20,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { StoryPagingSource(apiService, token) }
+            pagingSourceFactory = { StoryPagingSource(this, token) }
         ).flow
     }
 
