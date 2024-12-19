@@ -10,8 +10,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import com.nabila.storyappdicoding.utils.getOrAwaitValue
 import kotlinx.coroutines.test.setMain
-import com.nabila.storyappdicoding.utils.LiveDataTestUtil.getOrAwaitValue
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
